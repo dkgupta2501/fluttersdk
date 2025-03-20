@@ -1,5 +1,5 @@
-group = "com.inube.my_flutter_sdk"
-version = "1.0-SNAPSHOT"
+group = "com.github.yourusername"  // ✅ Replace with your GitHub username
+version = "1.0.0"  // ✅ Use a proper version, not SNAPSHOT
 
 buildscript {
     ext.kotlin_version = "1.8.22"
@@ -23,11 +23,15 @@ allprojects {
 
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
+apply plugin: "maven-publish"  // ✅ Required for JitPack publishing
 
 android {
     namespace = "com.inube.my_flutter_sdk"
-
     compileSdk = 35
+
+    defaultConfig {
+        minSdk = 21
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -40,28 +44,23 @@ android {
 
     sourceSets {
         main.java.srcDirs += "src/main/kotlin"
-        test.java.srcDirs += "src/test/kotlin"
     }
+}
 
-    defaultConfig {
-        minSdk = 21
-    }
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'  // ✅ Correct location
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.mockito:mockito-core:5.0.0")
+}
 
-    dependencies {
-        implementation 'androidx.appcompat:appcompat:1.6.1'  // ✅ Add this line
-        testImplementation("org.jetbrains.kotlin:kotlin-test")
-        testImplementation("org.mockito:mockito-core:5.0.0")
-    }
-
-    testOptions {
-        unitTests.all {
-            useJUnitPlatform()
-
-            testLogging {
-               events "passed", "skipped", "failed", "standardOut", "standardError"
-               outputs.upToDateWhen {false}
-               showStandardStreams = true
-            }
+// ✅ Configure Publishing for JitPack
+publishing {
+    publications {
+        release(MavenPublication) {
+            from components.release
+            groupId = 'com.github.yourusername'  // ✅ Replace with your GitHub username
+            artifactId = 'my_flutter_sdk'  // ✅ Change to match your SDK name
+            version = '1.0.0'  // ✅ Use semantic versioning
         }
     }
 }
